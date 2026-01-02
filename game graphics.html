@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ідея та підготовка</title>
+
+<style>
+body {
+  margin: 0;
+  background: #000;
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* ФОН ІЗ СОТАМИ */
+#hex-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+.hex {
+  stroke: #d59a2ced;
+  stroke-width: 6;
+  fill: #000;
+  transition: 0.25s ease;
+}
+
+.hex.hover-spot {
+  stroke: url(#gold-spot);
+  filter: drop-shadow(0 0 10px #ffdf7a);
+}
+
+/* ПАНЕЛЬ */
+#panel {
+  position: relative;
+  margin: 40px auto;
+  width: 70%;
+  padding: 40px 60px;
+  border-radius: 14px;
+  z-index: 5;
+  box-sizing: border-box;
+}
+
+#panel-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.90);
+  border-radius: 14px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#panel-content {
+  position: relative;
+  z-index: 2;
+}
+
+h1 {
+  text-align: center;
+  color: #ec790c;
+  text-shadow: 0 0 12px rgba(212,167,53,0.4);
+  margin-bottom: 22px;
+}
+
+h2 {
+  text-align: center;
+  color: #d4a735;
+  text-shadow: 0 0 12px rgba(212,167,53,0.4);
+  margin-bottom: 22px;
+}
+
+h1 { font-size: 42px; }
+h2 { font-size: 30px; }
+
+p {
+  color: #13ff7b;
+  font-size: 20px;
+  line-height: 1.55;
+  margin-bottom: 22px;
+}
+
+/* ЗОЛОТИЙ РОЗДІЛЬНИК */
+.divider {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #d4a735, #ffeb9c, #d4a735, transparent);
+  margin: 40px 0;
+  box-shadow: 0 0 12px rgba(212,167,53,0.6);
+  border-radius: 2px;
+}
+
+/* ФЛОАТЕР ЛІТЕР */
+.letter {
+    display: inline-block;
+    transition: transform 0.25s ease, filter 0.25s ease;
+  }
+  .letter:hover {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.25));
+}
+
+@media (max-width: 800px) {
+  #panel { width: 94%; padding: 20px; }
+  h1 { font-size: 26px; }
+  h2 { font-size: 20px; }
+  p { font-size: 16px; }
+}
+
+/* Блок зображення + кнопка реалізація */
+.concept-block {
+  margin: 30px auto 10px;
+  text-align: center;
+}
+
+.concept-block img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 18px rgba(212,167,53,0.5);
+  margin-bottom: 15px;
+}
+
+/* Посилання "реалізація" */
+.realization-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #ff4d4d;
+  font-size: 20px;
+  font-weight: bold;
+  transition: 0.25s ease;
+}
+
+.realization-link:hover {
+  color: #ff8080;
+  text-shadow: 0 0 8px rgba(255,0,0,0.7);
+}
+
+/* Червона кругла кнопка */
+.red-dot {
+  width: 14px;
+  height: 14px;
+  background: #ff2b2b;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255,0,0,0.9);
+  display: inline-block;
+}
+
+/* Пульсація червоної кнопки */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(255,0,0,0.8);
+  }
+  50% {
+    transform: scale(1.5);
+    box-shadow: 0 0 18px rgba(255,0,0,1);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(255,0,0,0.8);
+  }
+}
+
+.red-dot {
+  animation: pulse 1.4s infinite ease-in-out;
+}
+
+/*картинка*/
+.idea-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 25px auto;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(212,167,53,0.35);
+}
+
+/*leviathan*/
+.film-video {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  max-width: 600px;
+  border-radius: 14px;
+  box-shadow: 0 0 12px rgba(212,167,53,0.4);
+}
+
+/*dance rex*/
+.film-video {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  max-width: 600px;
+  border-radius: 14px;
+  box-shadow: 0 0 12px rgba(212,167,53,0.4);
+}
+
+.end-action {
+text-align: center;
+margin: 40px 0 10px;
+}
+
+
+.end-btn {
+display: inline-block;
+padding: 16px 28px;
+background: #400291;
+color: #000;
+border-radius: 999px;
+text-decoration: none;
+font-weight: 600;
+box-shadow: 0 0 12px rgba(212,167,53,0.6);
+transition: 0.25s ease;
+}
+
+
+.end-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 0 20px rgba(212,167,53,0.9);
+}
+
+/* ВИПАДНЕ МЕНЮ */
+.main-menu {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.menu-toggle {
+  background: rgba(0,0,0,0.85);
+  color: #d4a735;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(212,167,53,0.6);
+  transition: 0.25s ease;
+}
+
+.menu-toggle:hover {
+  color: #ffeb9c;
+  box-shadow: 0 0 20px rgba(212,167,53,1);
+}
+
+/* Контейнер пунктів */
+.menu-items {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(212,167,53,0.6);
+  backdrop-filter: blur(6px);
+
+  /* для анімації */
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.main-menu.open .menu-items {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.menu-items a {
+  color: #d4a735;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: 0.25s ease;
+}
+
+.menu-items a:hover {
+  color: #ffeb9c;
+  transform: translateX(5px);
+}
+
+.site-footer {
+  width: 100%;
+  text-align: center;
+  padding: 20px 10px;
+  margin-top: 40px;
+  background: #d4a735;
+  position: relative;
+  z-index: 5;
+}
+
+.site-footer p {
+  margin: 0;
+  color: #000 !important;   /* ← примусово чорний */
+  font-size: 16px;
+  text-shadow: none !important;
+}
+</style>
+</head>
+
+<body>
+<nav class="main-menu">
+  <button class="menu-toggle">☰</button>
+  <div class="menu-items">
+    <a href="index.html">🏠 Головна</a>
+    <a href="game graphics.html">🎮 3D в іграх</a>
+    <a href="film graphics.html">🎬 CGI у фільмах</a>
+    <a href="Nevymovne.html">🎓 ВНТУ</a>
+  </div>
+</nav>
+
+<svg id="hex-layer" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gold-spot" cx="0" cy="0" r="0.12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffe27a"/>
+      <stop offset="40%" stop-color="#d4a735"/>
+      <stop offset="100%" stop-color="#d4a735"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<div id="panel">
+  <div id="panel-bg"></div>
+  <div id="panel-content">
+
+<h1 class="to-split">3-D моделі в іграх
+  Створення та реалізація
+</h1>
+
+<h2 class="to-split">Ідея та підготовка</h2>
+
+<p class="to-split">
+Усе починається з задуму. На цьому етапі формується образ майбутньої ігрової моделі, її призначення у грі та роль у загальному світі. Визначається, чи це буде головний персонаж, ворог, нейтральний NPC, предмет або елемент оточення. Продумується характер, настрій, стиль, епоха, до якої належить об’єкт, а також те, які емоції він має викликати у гравця. Часто створюються концепт-арти, ескізи або мудборди, що допомагають візуалізувати ідею та зафіксувати ключові риси. На цьому ж етапі враховуються технічні обмеження рушія і платформи, щоб майбутня модель відповідала вимогам продуктивності. Добре пропрацьована ідея значно спрощує всі наступні кроки й зменшує кількість правок у процесі.
+<!-- Блок із прикладом реалізації -->
+<div class="concept-block">
+  <img src="Metal-Gear-Solid.jpg" alt="Concept art" class="idea-image">
+
+  <a href="https://sketchfab.com/3d-models/solid-snake-trophy-256d4c57d8704346a51184de3acbba7e" class="realization-link">
+    <span class="red-dot"></span>
+    <span class="realization-text">Реалізація 3D-моделі</span>
+  </a>
+</div>
+
+</p>
+
+<div class="divider"></div>
+
+<h2 class="to-split">Базова модель та деталізація</h2>
+
+<p class="to-split">
+Після затвердження концепції починається створення базової 3D-моделі. Формується основна геометрія з простих об’ємів, задаються пропорції, поза та загальний силует. Головне завдання — отримати правильну форму, яка добре читається навіть без деталей. Далі модель проходить етап деталізації, де за допомогою скульптингу додаються м’язи, складки одягу, елементи обладунку, тріщини, орнаменти та інші особливості поверхні. Після цього створюється оптимізована ігрова сітка з меншою кількістю полігонів, виконується UV-розгортка та запікання карт із високодеталізованої версії. Завершується етап текстуруванням і налаштуванням матеріалів, де додаються кольори, зношеність, бруд, блиск і реакція на світло. У результаті модель отримує фінальний вигляд, готовий до використання в реальному часі.
+</p>
+
+<img src="hq720.jpg" alt="Приклад базової моделі" class="idea-image">
+
+<div class="divider"></div>
+
+<h2 class="to-split">Скелет і підготовка до руху</h2>
+
+<p class="to-split">
+На цьому етапі модель переходить від статичного об’єкта до основи для анімації. Усередині створюється скелет із кісток, який визначає, як саме модель може рухатися. Налаштовується ієрархія кісток і їх розташування відповідно до анатомії або конструкції об’єкта. Сітка прив’язується до скелета так, щоб під час руху деформації виглядали природно, без заломів і розтягувань. За потреби додаються допоміжні системи для волосся, одягу чи аксесуарів, а також елементи інверсної кінематики для більш реалістичних поз. Цей етап є критично важливим, адже від якості риггінгу залежить, наскільки добре модель поводитиметься в анімаціях і під час взаємодії з грою.
+</p>
+
+<video src="document_5363831909757520785.mp4" autoplay loop muted class="film-video"></video>
+<div class="divider"></div>
+
+<h2 class="to-split">Анімація та інтеграція в гру</h2>
+
+<p class="to-split">
+Після підготовки скелета створюються анімації, які задають поведінку моделі: рухи, жести, атаки, реакції, цикли ходьби чи бігу, а також унікальні дії, пов’язані з геймплеєм. Анімації мають відповідати характеру та «вазі» об’єкта, щоб рухи виглядали переконливо. Далі модель разом зі скелетом і анімаціями імпортується в ігровий рушій, де налаштовуються матеріали, масштаби, орієнтація та відображення. Додаються колізії, точки взаємодії та зв’язок зі скриптами, щоб модель могла реагувати на дії гравця, команди та вплив оточення. На завершення проводиться оптимізація й тестування в ігрових сценах, перевіряється стабільність роботи та коректність анімацій. У результаті модель стає повноцінною частиною ігрового світу, готовою до використання в проєкті. Це стосуються всього в грі навіть перемикання важілю потребує всіх цих кроків.
+</p>
+
+<video src="document_5363831909757521043.mp4" autoplay loop muted class="film-video"></video>
+
+<div class="end-action">
+<a href="https://www.youtube.com/watch?v=TgoTyj-_G6s&list=LL&index=30&t=928s&pp=gAQBiAQBsAgC" class="end-btn">У цьому відео можна наглядно побачити виконання кожного кроку</a>
+</div>
+
+  </div>
+</div>
+
+<script>
+function splitToLetters(selector) {
+  document.querySelectorAll(selector).forEach(el => {
+    const text = el.textContent;
+    let html = "";
+    for (let ch of text) {
+      if (ch === " ") html += " ";
+      else html += `<span class="letter">${ch}</span>`;
+    }
+    el.innerHTML = html;
+  });
+}
+
+splitToLetters('.to-split');
+
+function generateHexGrid() {
+  const svg = document.getElementById("hex-layer");
+  const defs = svg.querySelector("defs").outerHTML;
+  svg.innerHTML = defs;
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  const size = 100;
+  const hexH = size * 0.866;
+  const cols = Math.ceil(w / size) + 2;
+  const rows = Math.ceil(h / (hexH * 0.75)) + 2;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * size + (row % 2 ? size / 2 : 0);
+      const y = row * hexH * 0.75;
+
+      const points = [
+        [x, y - hexH/2],
+        [x + size/2, y - hexH/4],
+        [x + size/2, y + hexH/4],
+        [x, y + hexH/2],
+        [x - size/2, y + hexH/4],
+        [x - size/2, y - hexH/4]
+      ].map(p => p.join(",")).join(" ");
+
+      const hex = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      hex.setAttribute("points", points);
+      hex.classList.add("hex");
+      svg.appendChild(hex);
+    }
+  }
+}
+
+generateHexGrid();
+window.addEventListener("resize", generateHexGrid);
+
+document.addEventListener("mousemove", e => {
+  const svg = document.getElementById("hex-layer");
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX;
+  pt.y = e.clientY;
+  const cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+  let poly = null;
+  document.querySelectorAll('.hex').forEach(h => {
+    const box = h.getBBox();
+    if (
+      cursor.x > box.x &&
+      cursor.x < box.x + box.width &&
+      cursor.y > box.y &&
+      cursor.y < box.y + box.height
+    ) poly = h;
+  });
+
+  document.querySelectorAll('.hex.hover-spot').forEach(h => {
+    if (h !== poly) h.classList.remove('hover-spot');
+  });
+  if (poly) poly.classList.add('hover-spot');
+});
+</script>
+
+<script>
+  const menu = document.querySelector('.main-menu');
+  const toggle = document.querySelector('.menu-toggle');
+
+  // відкриття / закриття по кнопці
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('open');
+  });
+
+  // закриття при кліку поза меню
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
+</script>
+<footer class="site-footer">
+  <p>Створив Хмільовський Владислав група 4КН-25б</p>
+</footer>
+</body>
+</html>

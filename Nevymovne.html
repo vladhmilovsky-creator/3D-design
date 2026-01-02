@@ -1,0 +1,439 @@
+<!DOCTYPE html> 
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ВНТУ — шлях у світ 3D та CGI</title>
+
+<style>
+/* ФОН ІЗ СОТАМИ */
+#hex-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+.hex {
+  stroke: #d59a2ced;
+  stroke-width: 6;
+  fill: #000;
+  transition: 0.25s ease;
+}
+
+.hex.hover-spot {
+  stroke-width: 6;
+  stroke: url(#gold-spot);
+  filter: drop-shadow(0 0 10px #ffdf7a);
+}
+
+body {
+  margin: 0;
+  background: #000;
+  font-family: Arial, sans-serif;
+  color: #13ff7b;
+}
+
+#panel {
+  position: relative;
+  margin: 40px auto;
+  width: 70%;
+  padding: 40px 60px;
+  border-radius: 14px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.9);
+  box-shadow: 0 0 25px rgba(212,167,53,0.4);
+  z-index: 5;
+}
+
+h1 {
+  text-align: center;
+  color: #ec790c;
+  text-shadow: 0 0 12px rgba(212,167,53,0.4);
+  margin-bottom: 22px;
+  font-size: 38px;
+}
+
+h2 {
+  text-align: center;
+  color: #d4a735;
+  text-shadow: 0 0 12px rgba(212,167,53,0.4);
+  margin: 40px 0 20px;
+  font-size: 28px;
+}
+
+p, li {
+  font-size: 20px;
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+/* ФЛОАТЕР ДЛЯ БУКВ */
+.letter {
+  display: inline-block;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.letter:hover {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.25));
+}
+
+/* Фікс для букв у списках */
+ul li .letter {
+  color: #13ff7b !important;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit; 
+}
+
+ul {
+  margin-left: 20px;
+}
+
+.divider {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #d4a735, #ffeb9c, #d4a735, transparent);
+  margin: 40px 0;
+  box-shadow: 0 0 12px rgba(212,167,53,0.6);
+  border-radius: 2px;
+}
+
+.end-action {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.end-btn {
+  display: inline-block;
+  padding: 16px 30px;
+  background: #d4a735;
+  color: #000;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(212,167,53,0.7);
+  transition: 0.25s ease;
+}
+
+.end-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(212,167,53,1);
+}
+
+@media (max-width: 900px) {
+  #panel { width: 92%; padding: 25px; }
+  h1 { font-size: 26px; }
+  h2 { font-size: 22px; }
+  p, li { font-size: 16px; }
+}
+
+/* Клікабельне зображення */
+.link-image {
+  float: right;
+  max-width: 30%;
+  height: auto;
+  margin: 10px 0 15px 25px; /* відступ зліва від картинки */
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(212,167,53,0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+
+
+.link-image:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 28px rgba(212,167,53,0.7);
+}
+
+/* ВИПАДНЕ МЕНЮ */
+.main-menu {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.menu-toggle {
+  background: rgba(0,0,0,0.85);
+  color: #d4a735;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(212,167,53,0.6);
+  transition: 0.25s ease;
+}
+
+.menu-toggle:hover {
+  color: #ffeb9c;
+  box-shadow: 0 0 20px rgba(212,167,53,1);
+}
+
+/* Контейнер пунктів */
+.menu-items {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(212,167,53,0.6);
+  backdrop-filter: blur(6px);
+
+  /* для анімації */
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.main-menu.open .menu-items {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.menu-items a {
+  color: #d4a735;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: 0.25s ease;
+}
+
+.menu-items a:hover {
+  color: #ffeb9c;
+  transform: translateX(5px);
+}
+.site-footer {
+  width: 100%;
+  text-align: center;
+  padding: 20px 10px;
+  margin-top: 40px;
+  background: #d4a735;
+  position: relative;
+  z-index: 5;
+}
+
+.site-footer p {
+  margin: 0;
+  color: #000 !important;   /* ← примусово чорний */
+  font-size: 16px;
+  text-shadow: none !important;
+}
+</style>
+</head>
+
+<body>
+<nav class="main-menu">
+  <button class="menu-toggle">☰</button>
+  <div class="menu-items">
+    <a href="index.html">🏠 Головна</a>
+    <a href="game graphics.html">🎮 3D в іграх</a>
+    <a href="film graphics.html">🎬 CGI у фільмах</a>
+    <a href="Nevymovne.html">🎓 ВНТУ</a>
+  </div>
+</nav>
+
+<svg id="hex-layer" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gold-spot" cx="0" cy="0" r="0.12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffe27a"/>
+      <stop offset="40%" stop-color="#d4a735"/>
+      <stop offset="100%" stop-color="#d4a735"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<div id="panel">
+  <div id="panel-content">
+
+<h1>🎮🎬 Створи майбутнє разом із ВНТУ</h1>
+
+<p>
+Ти уявляєш себе творцем віртуальних світів? Хочеш моделювати персонажів для AAA-ігор, проєктувати фантастичні локації, працювати над CGI-сценами, VFX та анімацією для фільмів і серіалів?
+Вінницький національний технічний університет (ВНТУ) — це місце, де твоє захоплення перетвориться на професію.
+</p>
+
+<p>
+У ВНТУ ти отримаєш не лише фундаментальні знання з IT та інженерії, а й практичні навички, необхідні для сучасної індустрії цифрового контенту: 3D modeling, texturing, rigging, animation, rendering, lighting, compositing, game development, real-time graphics, CGI та VFX.
+</p>
+
+<div class="divider"></div>
+
+<h2>🖥️ Ти навчишся:</h2>
+<ul>
+  <li>створювати високополігональні та low-poly 3D-моделі;</li>
+  <li>працювати з UV-розгортками, PBR-текстурами та матеріалами;</li>
+  <li>анімувати персонажів і об’єкти, налаштовувати риги;</li>
+  <li>будувати сцени та освітлення для фотореалістичного рендеру;</li>
+  <li>інтегрувати моделі в Unity та Unreal Engine;</li>
+  <li>розробляти інтерактивні застосунки та ігри;</li>
+  <li>створювати спецефекти та симуляції;</li>
+  <li>формувати власне портфоліо.</li>
+</ul>
+
+<div class="divider"></div>
+
+<h2>🎓 Спеціальності ВНТУ</h2>
+
+<p><b>🔹 Комп’ютерні науки</b><br>
+Програмування, алгоритми, комп’ютерна графіка. Шлях до technical artist або game developer.</p>
+
+<p><b>🔹 Інженерія програмного забезпечення</b><br>
+Розробка складних застосунків і платформ для геймдеву та CGI-студій.</p>
+
+<p><b>🔹 Комп’ютерна інженерія</b><br>
+Поєднання “заліза” і софту, оптимізація систем для рендерингу.</p>
+
+<p><b>🔹 Інформаційні системи та технології</b><br>
+Цифрові платформи й мультимедійні системи.</p>
+
+<p><b>🔹 Дизайн та мультимедійні технології</b><br>
+Поєднання мистецтва і технологій для ігор і кіно.</p>
+
+<div class="divider"></div>
+
+<h2>🚀 Чому саме ВНТУ?</h2>
+<a href="https://jetiq.vntu.edu.ua/" target="_blank">
+  <img src="Лого_ВНТУ.png" alt="Перехід за посиланням" class="link-image">
+</a>
+<ul>
+  <li>сучасні лабораторії;</li>
+  <li>сильна технічна підготовка;</li>
+  <li>викладачі з досвідом в IT;</li>
+  <li>реальні проєкти та хакатони;</li>
+  <li>практика в IT-компаніях;</li>
+  <li>портфоліо ще під час навчання;</li>
+  <li>високий попит на випускників.</li>
+</ul>
+<div class="divider"></div>
+
+<p>
+🌍 Світ потребує 3D artists, game designers, animators, VFX specialists, CGI developers, technical artists.  
+Саме ти можеш стати одним із них!
+</p>
+
+<p>
+✨ Якщо ти мрієш бачити результати своєї роботи в кіно, іграх та віртуальних світах —  
+обирай Вінницький національний технічний університет!
+</p>
+
+<div class="end-action">
+  <a href="index.html" class="end-btn">⬅ Повернутися на головну</a>
+</div>
+
+  </div>
+</div>
+
+<script>
+/* Розбиття тексту на букви */
+function splitToLetters(selector) {
+  document.querySelectorAll(selector).forEach(el => {
+    const text = el.textContent;
+    let html = "";
+    for (let ch of text) {
+      html += ch === " " ? " " : `<span class="letter">${ch}</span>`;
+    }
+    el.innerHTML = html;
+  });
+}
+
+/* Застосовуємо до контенту */
+splitToLetters('#panel-content h1, #panel-content h2, #panel-content p, #panel-content li');
+
+/* Генерація сот */
+function generateHexGrid() {
+  const svg = document.getElementById("hex-layer");
+  const defs = svg.querySelector("defs").outerHTML;
+  svg.innerHTML = defs;
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  const size = 100;
+  const hexH = size * 0.866;
+  const cols = Math.ceil(w / size) + 2;
+  const rows = Math.ceil(h / (hexH * 0.75)) + 2;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * size + (row % 2 ? size / 2 : 0);
+      const y = row * hexH * 0.75;
+
+      const points = [
+        [x, y - hexH/2],
+        [x + size/2, y - hexH/4],
+        [x + size/2, y + hexH/4],
+        [x, y + hexH/2],
+        [x - size/2, y + hexH/4],
+        [x - size/2, y - hexH/4]
+      ].map(p => p.join(",")).join(" ");
+
+      const hex = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      hex.setAttribute("points", points);
+      hex.classList.add("hex");
+      svg.appendChild(hex);
+    }
+  }
+}
+generateHexGrid();
+window.addEventListener("resize", generateHexGrid);
+
+/* Підсвітка під курсором */
+document.addEventListener("mousemove", e => {
+  const svg = document.getElementById("hex-layer");
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX;
+  pt.y = e.clientY;
+  const cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+  const grad = document.getElementById("gold-spot");
+  if (grad) {
+    grad.setAttribute("cx", cursor.x);
+    grad.setAttribute("cy", cursor.y);
+  }
+
+  const stack = document.elementsFromPoint(e.clientX, e.clientY);
+  let poly = null;
+  for (const el of stack) {
+    if (el.tagName && el.tagName.toLowerCase() === 'polygon') {
+      poly = el; break;
+    }
+  }
+  document.querySelectorAll('.hex.hover-spot').forEach(h => {
+    if (h !== poly) h.classList.remove('hover-spot');
+  });
+  if (poly) poly.classList.add('hover-spot');
+});
+</script>
+
+<script>
+  const menu = document.querySelector('.main-menu');
+  const toggle = document.querySelector('.menu-toggle');
+
+  // відкриття / закриття по кнопці
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('open');
+  });
+
+  // закриття при кліку поза меню
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
+</script>
+<footer class="site-footer">
+  <p>Створив Хмільовський Владислав група 4КН-25б</p>
+</footer>
+</body>
+</html>

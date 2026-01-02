@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3D Дизайн у Іграх та Медіа</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* ФОН ІЗ СОТАМИ */
+  #hex-layer {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: auto;
+  }
+
+  .hex {
+    stroke: #d59a2ced;
+    stroke-width: 6;
+    fill: #000;
+    transition: 0.25s ease;
+  }
+
+  .hex.hover-spot {
+    stroke-width: 6;
+    stroke: url(#gold-spot);
+    filter: drop-shadow(0 0 10px #ffdf7a);
+  }
+
+  /* ПАНЕЛЬ */
+  #panel {
+    position: relative;
+    margin: 40px auto;
+    width: 70%;
+    padding: 40px 60px;
+    border-radius: 14px;
+    z-index: 5;
+    box-sizing: border-box;
+  }
+
+  /* Фон панелі (пропускає події миші) */
+  #panel-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.90);
+    border-radius: 14px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #panel-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  p {
+    color: #13ff7b;
+    font-size: 20px;
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+
+ h1 {
+  text-align: center;
+  color: #ec790c;
+  text-shadow: 0 0 12px rgba(212,167,53,0.4);
+  margin-bottom: 22px;
+}
+
+h2 {
+  text-align: center;
+  color: #d4a735;
+  text-shadow: 0 0 12px rgba(212,167,53,0.4);
+  margin-bottom: 22px;
+}
+
+  h1 { font-size: 42px; }
+  h2 { font-size: 32px; }
+
+  /* Золотий роздільник */
+  .separator {
+    width: 60%;
+    height: 2px;
+    margin: 40px auto;
+    background: linear-gradient(to right, transparent, #d4a735, transparent);
+    box-shadow: 0 0 12px rgba(212,167,53,0.5);
+    border-radius: 2px;
+  }
+
+  /* Золотий список */
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 30px;
+  }
+
+  ul li {
+    color: #13ff7b;
+    font-size: 20px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+    position: relative;
+    padding-left: 34px;
+    font-weight: 500;
+  }
+
+  ul li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0px;
+    font-size: 30px;
+    color: #d4a735;
+    text-shadow: 0 0 10px rgba(212, 167, 53, 0.7);
+    font-weight: bold;
+  }
+
+  /* ФЛОАТЕР ДЛЯ БУКВ */
+  .letter {
+    display: inline-block;
+    transition: transform 0.25s ease, filter 0.25s ease;
+  }
+  .letter:hover {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.25));
+  }
+
+  /* Фікс для букв у списку — щоб не ставали чорними і були потрібного розміру */
+  ul li .letter {
+    color: #13ff7b !important;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+  }
+
+  /* Скроли стилі */
+  #panel-content {
+  overflow: visible;
+  padding-right: 0;
+}
+
+.roles-and-video {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.film-video {
+  width: 390px;
+  border-radius: 14px;
+  box-shadow: 0 0 12px rgba(212,167,53,0.4);
+}
+ 
+  @media (max-width: 800px) {
+    #panel { width: 94%; padding: 20px; margin: 20px auto; }
+    h1 { font-size: 26px; }
+    h2 { font-size: 20px; }
+    ul li { font-size: 18px; }
+    p { font-size: 16px; }
+  }
+
+/* ВИПАДНЕ МЕНЮ */
+.main-menu {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.menu-toggle {
+  background: rgba(0,0,0,0.85);
+  color: #d4a735;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(212,167,53,0.6);
+  transition: 0.25s ease;
+}
+
+.menu-toggle:hover {
+  color: #ffeb9c;
+  box-shadow: 0 0 20px rgba(212,167,53,1);
+}
+
+/* Контейнер пунктів */
+.menu-items {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(212,167,53,0.6);
+  backdrop-filter: blur(6px);
+
+  /* для анімації */
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.main-menu.open .menu-items {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.menu-items a {
+  color: #d4a735;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: 0.25s ease;
+}
+
+.menu-items a:hover {
+  color: #ffeb9c;
+  transform: translateX(5px);
+}
+
+.site-footer {
+  width: 100%;
+  text-align: center;
+  padding: 20px 10px;
+  margin-top: 40px;
+  background: #d4a735;
+  position: relative;
+  z-index: 5;
+}
+
+.site-footer p {
+  margin: 0;
+  color: #000 !important;   /* ← примусово чорний */
+  font-size: 16px;
+  text-shadow: none !important;
+}
+
+
+</style>
+</head>
+
+<body>
+<nav class="main-menu">
+  <button class="menu-toggle">☰</button>
+  <div class="menu-items">
+    <a href="index.html">🏠 Головна</a>
+    <a href="game graphics.html">🎮 3D в іграх</a>
+    <a href="film graphics.html">🎬 CGI у фільмах</a>
+    <a href="Nevymovne.html">🎓 ВНТУ</a>
+  </div>
+</nav>
+
+
+<!-- ФОН -->
+<svg id="hex-layer" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gold-spot" cx="0" cy="0" r="0.12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffe27a"/>
+      <stop offset="40%" stop-color="#d4a735"/>
+      <stop offset="100%" stop-color="#d4a735"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<!-- ПАНЕЛЬ -->
+<div id="panel">
+  <div id="panel-bg"></div>
+  <div id="panel-content">
+
+    <h1 class="to-split">3D Дизайн у Іграх та Медіа</h1>
+
+    <p class="to-split">Всі ми стикалися з 3D-моделюванням — у відеоіграх, фільмах, рекламі чи анімаціях. Але як саме працює цей процес і що відбувається за лаштунками створення тривимірних світів?</p>
+
+    <h2 class="to-split">3D-моделювання в іграх</h2>
+
+    <p class="to-split">У відеоігровій індустрії створення 3D-моделі починається з того, що художники формують базову форму персонажа або об’єкта. Вони використовують спеціальні програми на кшталт Blender, Maya, 3ds Max або ZBrush, де створюють сітку (mesh) із багатьох полігонів. Ця сітка є «каркасом» будь-якого 3D-об’єкта.</p>
+
+    <p class="to-split">Після формування бази на модель накладають текстури — зображення, що визначають колір, візерунки, матеріали (метал, дерево, тканина) та дрібні деталі. Додатково застосовують нормал мепи, спекулярні карти, карти рельєфу, щоб зробити поверхню більш реалістичною без збільшення кількості полігонів.</p>
+
+    <p class="to-split">Однак сама модель поки що «мертва». Щоб вона могла рухатися, її потрібно «оживити». Для цього використовується процес риггінгу — створення внутрішнього скелета з кістками та суглобами. Кожна кістка приписується до певних частин сітки, і коли ця кістка рухається, відповідна частина моделі рухається разом із нею.</p>
+
+    <p class="to-split">Після риггінгу аніматори створюють анімації: ходьбу, біг, стрибки, атаки, рухи рук, міміку тощо. В іграх важливо, щоб анімації виглядали плавними, але в той же час були оптимізованими, адже все це працює в реальному часі. Саме тому для ігор часто створюють різні LOD-рівні (Levels of Detail) — кілька версій тієї самої моделі з різною кількістю полігонів. На дальній відстані гра показує менш деталізовані версії, щоб економити ресурси.</p>
+
+    <p class="to-split">Також у відеоіграх використовують фізичні симуляції — для одягу, волосся, частинок або вибухів. Проте ці симуляції теж оптимізують, щоб не навантажувати процесор і відеокарту.</p>
+
+    <p class="to-split">Загалом 3D-моделювання в іграх — це поєднання мистецтва, технічних знань і великої кількості інструментів, що дозволяють створювати персонажів і світи, які реагують на дії гравця.</p>
+
+    <div class="separator"></div>
+
+    <h2 class="to-split">3D-моделювання у фільмах</h2>
+
+    <p class="to-split">У кіно створення 3D-моделей також починають з концептів і базової геометрії, але процес значно масштабніший. Кінематографічні моделі зазвичай набагато деталізованіші, адже у фільмах кадри не рендеряться в реальному часі. Це дозволяє робити мільйони полігонів, складні матеріали, точні симуляції світла та фізики.</p>
+
+    <p class="to-split">Щоб модель виконувала реалістичні рухи, використовують технологію motion capture. Актор одягає спеціальний костюм із датчиками, а навколо нього встановлюють десятки високоточних камер. Рухи актора фіксуються в тривимірному просторі й переносяться на цифрову модель. Таким чином досягається природність рухів, жестикуляції та навіть міміки.</p>
+
+    
+    <p class="to-split">У фільмах часто моделюють не лише персонажів, а й цілі середовища: міста, космічні кораблі, фантастичних істот, монстрів, історичні реконструкції. Над такими сценами працюють великі команди:</p>
+
+    <!-- 🔥 ДОДАВ ТІЛЬКИ ЦЕ -->
+    <div class="roles-and-video">
+        <ul id="roles">
+          <li class="to-split">Моделери створюють об’єкти;</li>
+          <li class="to-split">Текстурники переносять матеріали;</li>
+          <li class="to-split">Риггери додають скелет;</li>
+          <li class="to-split">Аніматори оживляють модель;</li>
+          <li class="to-split">VFX-художники додають вибухи, дим, вогонь, воду, магію;</li>
+          <li class="to-split">Освітлювачі налаштовують світло, тіні й відблиски;</li>
+          <li class="to-split">Рендер-відділ прораховує фінальне зображення.</li>
+        </ul>
+
+        <!-- ВІДЕО ТУТ -->
+        <video src="Dinosaur.mp4" autoplay loop muted class="film-video"></video>
+    </div>
+    <!-- 🔥 ДО ЦЬОГО МОМЕНТУ — ВСЕ, ЩО Я ДОДАВ -->
+
+    <p class="to-split">Для складних сцен використовують симуляції волосся, шерсті, тканин, рідин та навіть цілих натовпів людей. Фільми також активно застосовують CGI-композицію, коли 3D-моделі поєднуються зі зйомками реальних акторів.</p>
+
+    <p class="to-split">У великих студіях рендеринг одного кадру може займати від кількох хвилин до кількох годин, а іноді й днів, залежно від складності сцени.</p>
+  </div>
+</div>
+
+<script>
+/* Функція, що розбиває задані елементи на spans по букві, зберігаючи пробіли */
+function splitToLetters(selector) {
+  document.querySelectorAll(selector).forEach(el => {
+    const text = el.textContent;
+    let html = "";
+    for (let ch of text) {
+      if (ch === " ") {
+        html += " ";
+      } else {
+        html += `<span class="letter">${ch}</span>`;
+      }
+    }
+    el.innerHTML = html;
+  });
+}
+
+/* Розбиваємо лише ті елементи, що повинні стати інтерактивними:
+   h1, h2, p, li (але не ul) */
+splitToLetters('#panel-content h1, #panel-content h2, #panel-content p, #panel-content li');
+
+/* Генерація сот */
+function generateHexGrid() {
+  const svg = document.getElementById("hex-layer");
+  const defs = svg.querySelector("defs").outerHTML;
+  svg.innerHTML = defs;
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  const size = 100;
+  const hexH = size * 0.866;
+  const cols = Math.ceil(w / size) + 2;
+  const rows = Math.ceil(h / (hexH * 0.75)) + 2;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * size + (row % 2 ? size / 2 : 0);
+      const y = row * hexH * 0.75;
+
+      const points = [
+        [x, y - hexH/2],
+        [x + size/2, y - hexH/4],
+        [x + size/2, y + hexH/4],
+        [x, y + hexH/2],
+        [x - size/2, y + hexH/4],
+        [x - size/2, y - hexH/4]
+      ].map(p => p.join(",")).join(" ");
+
+      const hex = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      hex.setAttribute("points", points);
+      hex.classList.add("hex");
+      svg.appendChild(hex);
+    }
+  }
+}
+generateHexGrid();
+window.addEventListener("resize", generateHexGrid);
+
+/* Підсвітка під курсором (радіальний градієнт) */
+document.addEventListener("mousemove", e => {
+  const svg = document.getElementById("hex-layer");
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX;
+  pt.y = e.clientY;
+  const cursor = pt.matrixTransform(svg.getScreenCTM().inverse());
+  const grad = document.getElementById("gold-spot");
+  if (grad) {
+    grad.setAttribute("cx", cursor.x);
+    grad.setAttribute("cy", cursor.y);
+  }
+
+  // знаходимо polygon під курсором (навіть якщо елементи панелі поверх)
+  const stack = document.elementsFromPoint(e.clientX, e.clientY);
+  let poly = null;
+  for (const el of stack) {
+    if (el.tagName && el.tagName.toLowerCase() === 'polygon') { poly = el; break; }
+  }
+  // прибираємо попередній hover
+  document.querySelectorAll('.hex.hover-spot').forEach(h => {
+    if (h !== poly) h.classList.remove('hover-spot');
+  });
+  if (poly) poly.classList.add('hover-spot');
+});
+</script>
+
+<script>
+  const menu = document.querySelector('.main-menu');
+  const toggle = document.querySelector('.menu-toggle');
+
+  // відкриття / закриття по кнопці
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('open');
+  });
+
+  // закриття при кліку поза меню
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
+</script>
+<footer class="site-footer">
+  <p>Створив Хмільовський Владислав група 4КН-25б</p>
+</footer>
+</body>
+</html>

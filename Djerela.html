@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Джерела</title>
+
+<style>
+body {
+  margin: 0;
+  background: #000;
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== ФОН ІЗ СОТАМИ ===== */
+#hex-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+.hex {
+  stroke: #d59a2ced;
+  stroke-width: 6;
+  fill: #000;
+  transition: 0.25s ease;
+}
+
+.hex.hover-spot {
+  stroke: url(#gold-spot);
+  filter: drop-shadow(0 0 10px #ffdf7a);
+}
+
+/* ===== ВИПАДНЕ МЕНЮ (ЯК У РЕФЕРЕНСІ) ===== */
+.main-menu {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.menu-toggle {
+  background: rgba(0,0,0,0.85);
+  color: #d4a735;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(212,167,53,0.6);
+  transition: 0.25s ease;
+}
+
+.menu-toggle:hover {
+  color: #ffeb9c;
+  box-shadow: 0 0 20px rgba(212,167,53,1);
+}
+
+.menu-items {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  box-shadow: 0 0 15px rgba(212,167,53,0.6);
+  backdrop-filter: blur(6px);
+
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.main-menu.open .menu-items {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.menu-items a {
+  color: #d4a735;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: 0.25s ease;
+}
+
+.menu-items a:hover {
+  color: #ffeb9c;
+  transform: translateX(5px);
+}
+
+/* ===== ПАНЕЛЬ ===== */
+#panel {
+  position: relative;
+  margin: 80px auto 40px;
+  width: 70%;
+  padding: 40px 60px;
+  border-radius: 14px;
+  z-index: 5;
+  box-sizing: border-box;
+}
+
+#panel-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+#panel-content {
+  position: relative;
+  z-index: 2;
+}
+
+h1 {
+  text-align: center;
+  color: #d4a735;
+  text-shadow: 0 0 12px rgba(212,167,53,0.4);
+  margin-bottom: 30px;
+  font-size: 42px;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul li {
+  color: #13ff7b;
+  font-size: 20px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+a {
+  color: #13ff7b;
+  word-break: break-all;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffeb9c;
+  text-shadow: 0 0 6px rgba(255,235,156,0.6);
+}
+
+/* ===== ФУТЕР ===== */
+.site-footer {
+  width: 100%;
+  text-align: center;
+  padding: 20px 10px;
+  margin-top: 40px;
+  background: #d4a735;
+  position: relative;
+  z-index: 5;
+}
+
+.site-footer p {
+  margin: 4px 0;
+  color: #000 !important;
+  font-size: 16px;
+  text-shadow: none !important;
+}
+
+@media (max-width: 800px) {
+  #panel { width: 94%; padding: 20px; }
+  h1 { font-size: 26px; }
+  ul li { font-size: 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== МЕНЮ ===== -->
+<nav class="main-menu">
+  <button class="menu-toggle">☰</button>
+  <div class="menu-items">
+    <!-- 🔽 ТУТ ТИ МІНЯЄШ ПОСИЛАННЯ -->
+    <a href="index.html">🏠 Головна</a>
+    <a href="game graphics.html">🎮 3D в іграх</a>
+    <a href="film graphics.html">🎬 CGI у фільмах</a>
+    <a href="Nevymovne.html">🎓 ВНТУ</a>
+    <a href="Djerela.html">📚 Джерела</a>
+  </div>
+</nav>
+
+<!-- ===== ФОН ===== -->
+<svg id="hex-layer" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="gold-spot" cx="0" cy="0" r="0.12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffe27a"/>
+      <stop offset="40%" stop-color="#d4a735"/>
+      <stop offset="100%" stop-color="#d4a735"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<!-- ===== КОНТЕНТ ===== -->
+<div id="panel">
+  <div id="panel-bg"></div>
+  <div id="panel-content">
+
+    <h1>📚 Джерела</h1>
+
+    <ul>
+      <li>Wikipedia –  
+        <a href="https://uk.wikipedia.org/wiki/%D0%A2%D1%80%D0%B8%D0%B2%D0%B8%D0%BC%D1%96%D1%80%D0%BD%D0%B5_%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8E%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F" target="_blank">
+          https://uk.wikipedia.org/wiki/Тривимірне_моделювання
+        </a>
+      </li>
+
+      <li>Motion Capture (FilmCore) –  
+        <a href="https://www.youtube.com/watch?v=TgoTyj-_G6s&t=218s" target="_blank">
+          https://www.youtube.com/watch?v=TgoTyj-_G6s&t=218s
+        </a>
+      </li>
+
+      <li>Відео з розробкою мультфільму “Шрек” (канал vitecks) –  
+        <a href="https://youtu.be/Vb-mrl4EQhA" target="_blank">
+          https://youtu.be/Vb-mrl4EQhA
+        </a>
+      </li>
+
+      <li>Відео з розробкою фільму “Аватар” (канал Insider) –  
+        <a href="https://youtu.be/IPQ5vTqqdgE" target="_blank">
+          https://youtu.be/IPQ5vTqqdgE
+        </a>
+      </li>
+
+      <li>Відеоряд з анімацією тиранозавра (канал Kanine) –  
+        <a href="https://vm.tiktok.com/ZMDjm3SAH/" target="_blank">
+          https://vm.tiktok.com/ZMDjm3SAH/
+        </a>
+      </li>
+
+      <li>Відеоряд з демонстрацією скелета левіафана (канал MetaDumplings) –  
+        <a href="https://vm.tiktok.com/ZMDjueHN7/" target="_blank">
+          https://vm.tiktok.com/ZMDjueHN7/
+        </a>
+      </li>
+
+      <li>3D модель персонажа  –  
+        <a href="https://sketchfab.com/3d-models/solid-snake-trophy-256d4c57d8704346a51184de3acbba7e" target="_blank">
+          https://sketchfab.com/3d-models/solid-snake-trophy-256d4c57d8704346a51184de3acbba7e
+        </a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Створив Хмільовський Владислав група 4КН-25б</p>
+  <p>Email: vlad.hmilovsky@gmail.com</p>
+</footer>
+
+<script>
+/* меню */
+const menu = document.querySelector('.main-menu');
+const toggle = document.querySelector('.menu-toggle');
+
+toggle.addEventListener('click', (e) => {
+  e.stopPropagation();
+  menu.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  if (!menu.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+/* соти */
+function generateHexGrid() {
+  const svg = document.getElementById("hex-layer");
+  const defs = svg.querySelector("defs").outerHTML;
+  svg.innerHTML = defs;
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const size = 100;
+  const hexH = size * 0.866;
+  const cols = Math.ceil(w / size) + 2;
+  const rows = Math.ceil(h / (hexH * 0.75)) + 2;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * size + (row % 2 ? size / 2 : 0);
+      const y = row * hexH * 0.75;
+
+      const points = [
+        [x, y - hexH/2],
+        [x + size/2, y - hexH/4],
+        [x + size/2, y + hexH/4],
+        [x, y + hexH/2],
+        [x - size/2, y + hexH/4],
+        [x - size/2, y - hexH/4]
+      ].map(p => p.join(",")).join(" ");
+
+      const hex = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      hex.setAttribute("points", points);
+      hex.classList.add("hex");
+      svg.appendChild(hex);
+    }
+  }
+}
+
+generateHexGrid();
+window.addEventListener("resize", generateHexGrid);
+</script>
+
+</body>
+</html>
